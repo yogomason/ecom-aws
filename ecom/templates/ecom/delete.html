@@ -1,0 +1,11 @@
+{%  extends 'ecom/main.html' %}
+
+{% block content %}
+
+<h3>Are you sure you want to delete {{product.name}}</h3>
+<a class="btn btn-sm btn-info" href="{% url 'home' %}">Home</a>
+<form action="" method="post">
+  {%csrf_token%}
+  <input class="btn btn-sm btn-danger" type="submit" name="submit" value="Delete">
+</form>
+{% endblock %}

@@ -1,0 +1,19 @@
+{%  extends 'ecom/main.html' %}
+
+{% block content %}
+<style>
+body{
+      background: white url("images/background.jpg") no-repeat;
+      background-size: 100%;
+      background-attachment: fixed;
+  }
+</style>
+
+<body>
+<form action="" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{form}}
+  <input type="submit" name="Submit">
+</form>
+</body>
+{% endblock %}

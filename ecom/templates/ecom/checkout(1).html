@@ -1,0 +1,238 @@
+{%  extends 'ecom/main.html' %}
+{% load static %}
+{% block content %}
+<style>
+body{
+      background: white url({% static 'images/background.jpg' %}) no-repeat;
+      background-size: 100%;
+      background-attachment: fixed;
+  }
+  .wrapper{
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 3fr 1fr;
+    grid-auto-rows: minmax(100px, auto);
+    grid-gap: 1em;
+    justify-content:stretch;
+    align-items: start;
+    align-items: stretch;
+  }
+  .content > div{
+    background: #ff3333;
+    /* padding: 1em; */
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+  .box {
+    background-color:#e6e6e6;
+    padding: 20px;
+    box-shadow: 6px 2px 30px 0px rgba(115, 115, 115);
+
+    grid-template-columns: 1fr ;
+  }
+  .box2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-bottom: 40px;
+  }
+  .box3 {
+    /* justify-self: end; */
+  }
+
+  .user-info{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background-color:  #cccccc;
+    box-shadow: 6px 2px 30px 0px rgba(115, 115, 115);
+    color: #ffffff
+
+  }
+.namefield{
+    grid-template-columns: 1/2;
+    margin-bottom: 20px;
+}
+
+.box2 > div:nth-child(odd){
+  padding-bottom: 10px;
+  margin-right: 12px;
+}
+
+.box3 {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.shipping{
+  background-color:#e6e6e6;
+  padding: 20px;
+  box-shadow: 6px 2px 30px 0px rgba(115, 115, 115);
+}
+
+.tableformat td:nth-child(1){
+    width: 100px;
+}
+.tableformat td:nth-child(2){
+    width: 130px;
+}
+.tableformat td:nth-child(3){
+    width: 100px;
+}
+.tableformat td:nth-child(4){
+    text-align: right;
+}
+
+.payment-wrapper {
+  background-color:#e6e6e6;
+  padding: 20px;
+  margin-top: 40px;
+  box-shadow: 6px 2px 30px 0px rgba(115, 115, 115);
+
+}
+
+.hidden{
+  display: none;
+}
+
+
+</style>
+<body>
+  <div class="wrapper">
+    <div></div>
+      <div class="box box1" id="box">
+      <div class="">
+      <div id="cust-info" style="margin-bottom:12px;font-size:18pt;">Customer Information:</div>
+      <form id="form">
+        <div id="user-info">
+        <div  class ="namefield">
+          <input required class="form-control" type="text" name="name" placeholder="name...">
+        </div>
+        <div>
+          <input required class="form-control" type="text" name="email" placeholder="email...">
+        </div>
+          </div>
+          <div>Payment types:</div>
+        <div class="payment-wrapper hidden" id="payment-options">
+          <small>Pay with Paypal</small>
+          <button class="btn btn-warning" id="make-payment">Make payment</button>
+        </div>
+
+    </div>
+  </div>
+  <div class="shipping">
+    <div class=" box2">
+      <div style="font-size:17pt;"><p>Shipping Information:</p></div>
+      <div></div>
+      <div class ="namefield">
+        <input required class="form-control" type="text" name="address" placeholder="address...">
+      </div>
+      <div class ="namefield">
+        <input required class="form-control" type="text" name="address2" placeholder="address2...">
+      </div>
+      <div>
+        <input required class="form-control" type="text" name="city" placeholder="city...">
+      </div>
+      <div>
+        <input required class="form-control" type="text" name="postcode" placeholder="postcode...">
+      </div>
+    </div>
+    <div>  <input class="btn btn-primary btn-lg btn-block btn-success" type="submit" value="Continue" id="formbtn"></div>
+</div>
+
+    </form>
+    <div class="box">
+<div><a class="btn btn-sm btn-info" href="{% url 'cart' %}"> ← Back to cart</a></div>
+<div style="margin-top:12px;"><p style="font-size:18pt;">Order Summary</p></div>
+<div>
+  <table>
+    <tr class="tableformat">
+    <td></td>
+    <td>Products</td>
+    <td>Price</td>
+    <td>Quantity</td>
+  </tr>
+  {% for item in items %}
+  <tr>
+  <td><img style="width:80px; height:auto;" src="{{item.product.image.url}}"></img></td>
+  <td>{{item.product.name}}</td>
+  <td>£{{item.product.price|floatformat:2}}</td>
+  <td>x{{item.quantity}}</td>
+  {% endfor %}
+</table>
+</div>
+<div style="margin-top:20px;">Items: {{order.get_cart_items}} </div>
+<div style="margin-top:20px;">Total: £{{order.get_cart_total|floatformat:2}}</div>
+  </div>
+  <div id='spacer'></div>
+  <div id='spacer'></div>
+  </div>
+</body>
+
+<script type="text/javascript">
+
+  var total = '{{order.get_cart_total}}'
+  var x = '{{request.user}}'
+  console.log(x)
+  if (x != 'AnonymousUser'){
+    document.getElementById("user-info").innerHTML = ''
+    document.getElementById('cust-info').classList.add('hidden');
+  }
+
+  var form = document.getElementById('form')
+    console.log(form);
+  form.addEventListener('submit', function(e){
+    e.preventDefault()
+    console.log('form submitted')
+    document.getElementById('formbtn').classList.add('hidden');
+    document.getElementById('payment-options').classList.remove('hidden');
+  })
+
+    document.getElementById('make-payment').addEventListener('click', function(e){
+      submitFormData()
+    })
+
+    function submitFormData(){
+      console.log('Payment button pushed');
+
+      var userFormData = {
+        'name':null,
+        'email':null,
+        'total':total
+      }
+
+      var shippingInfo = {
+        'address':null,
+        'address2':null,
+        'city':null,
+        'postcode':null,
+      }
+
+
+      shippingInfo.address = form.address.value
+      shippingInfo.address2 = form.address2.value
+      shippingInfo.city = form.city.value
+      shippingInfo.postcode = form.postcode.value
+
+      if(x == 'AnonymousUser'){
+        userFormData.name = form.name.value
+        userFormData.email = form.email.value
+      }
+
+      var url = '/process_order/'
+      fetch(url, {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'X-CSRFToken':csrftoken,
+        },
+        body:JSON.stringify({'form':userFormData, 'shipping':shippingInfo})
+      })
+      .then((response) => response.json())
+
+      .then((data) => {
+        console.log('Success', data);
+        alert('Transaction complete');
+        window.location.href = "{% url 'home' %}"
+      })
+
+    }
+</script>
+{% endblock %}
