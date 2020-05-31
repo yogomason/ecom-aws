@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'i9j^e&5aw)!b^ype+8++6f(w)f8*0$l^)6z!5&8zu+t2*96(_y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['jake-ecom.herokuapp.com']
 
 
 # Application definition
